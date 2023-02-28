@@ -1,3 +1,13 @@
+function acionarFuncaoFrame() {
+    
+    documento = document.getElementById('frame').contentWindow.document;
+
+    console.log(documento);
+
+    removerTabelasVazias(documento);
+
+}
+
 /*
 * O objetivo é criar uma função, ou conjunto de funções, que consiga
 * eliminar tabelas vazias do documento html.
@@ -22,11 +32,15 @@ function removerTabelasVazias(elemento = document) {
     
     tabelas = elemento.querySelectorAll('table');
 
-    tabelas.forEach((tabela) => {
+    console.log('VARRENDO TABELAS: '+tabelas.length);
+
+    tabelas.forEach((tabela, i) => {
         
         removerLinhasVazias(tabela);
 
         if(tabela.querySelectorAll('tr').length == 0) {
+            console.log('REMOVENDO TABELA VAZIA: '+ i);
+            console.log(tabela);
             tabela.parentNode.removeChild(tabela);
         }
 
@@ -41,9 +55,13 @@ function removerLinhasVazias(tabela) {
     linhas = tabela.querySelectorAll('tr');
     contador_linhas = linhas.length;
 
-    linhas.forEach((linha) => {
+    console.log('VARRENDO LINHAS')
+
+    linhas.forEach((linha, i) => {
 
         if (naoPossuiCelula(linha) || possuiCelulaUnicaSemFilhosVazia(linha) || possuiCelulaUnicaBR(linha)) {
+            console.log('REMOVENDO LINHA VAZIA: '+ i);
+            console.log(linha);
             linha.parentNode.removeChild(linha);
         }
 
@@ -75,7 +93,7 @@ function possuiCelulaUnicaBR(linha) {
 
         })
 
-        return qtdBRs > 0;
+        return qtdBRs > 0 && arrumarTextoVazio(linha.children.item('td').textContent).length == 0;
 
     }
 }

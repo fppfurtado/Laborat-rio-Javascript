@@ -18,23 +18,72 @@
 */
 
 
-removeElementosVazios = function(elemento) {
+function removerTabelasVazias(elemento = document) {
+    
+    tabelas = elemento.querySelectorAll('table');
 
-    regex = /(\n|\t|\s)/g;
+    tabelas.forEach((tabela) => {
+        
+        removerLinhasVazias(tabela);
 
-    if(elemento.hasChildNodes()) {
-        console.log(elemento.children);
-        Array.from(elemento.children).forEach((e) => {
-            removeElementosVazios(e);
-        })
-    } else {
-        if(elemento.textContent.trim().replaceAll(regex, '').length == 0) {
-            console.log('======================');
-            console.log('ELEMENTO PAI: ');
-            console.log(elemento);
-            console.log('======================');
-            console.log('removendo o elemento ' + elemento + ': ' + elemento.textContent);
-            elemento.parentNode.removeChild(elemento);
+        if(tabela.querySelectorAll('tr').length == 0) {
+            tabela.parentNode.removeChild(tabela);
         }
+
+    });
+
+    alert('Remoção Concluída!');
+
+} 
+
+function removerLinhasVazias(tabela) {
+
+    linhas = tabela.querySelectorAll('tr');
+    contador_linhas = linhas.length;
+
+    linhas.forEach((linha) => {
+
+        if (naoPossuiCelula(linha) || possuiCelulaUnicaSemFilhosVazia(linha) || possuiCelulaUnicaBR(linha)) {
+            linha.parentNode.removeChild(linha);
+        }
+
+    })
+
+}
+
+function naoPossuiCelula(linha) {
+    return linha.children.length == 0;
+}
+
+function possuiCelulaUnicaSemFilhosVazia(linha) {
+    return linha.children.length == 1 && linha.children.item('td').children.length == 0 && arrumarTextoVazio(linha.children.item('td').textContent).length == 0;
+}
+
+function possuiCelulaUnicaBR(linha) {
+    if (linha.children.length == 1) {
+
+        filhosCelula = linha.children.item('td').children;
+        qtdBRs = 0;
+
+        Array.from(filhosCelula).forEach((e) => {
+
+            if (e.nodeName != 'BR') {
+                return;
+            } else {
+                qtdBRs++;
+            }
+
+        })
+
+        return qtdBRs > 0;
+
     }
+}
+
+function arrumarTextoVazio(texto) {
+
+    regex = /^(\n|\t|\s)*$/g;
+
+    return texto.trim().replaceAll(regex, '');
+
 }
